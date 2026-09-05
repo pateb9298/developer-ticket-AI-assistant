@@ -1,12 +1,14 @@
 # Intelligent Issue Router
 
-An AI-powered backend system that automatically analyzes software issues, determines their priority and category, recommends the appropriate engineering team, and allows users to query their issue data using natural language.
+An AI backend system that automatically analyzes software issues, determines their priority and category, recommends the appropriate engineering team, and allows users to query their issue data using natural language.
 
 ## Features
 
 - Create, retrieve, update, and delete software issues
 - Store issue data in Amazon DynamoDB
-- Analyze issues using OpenAI
+- Analyze issues and attachments using OpenAI
+- Upload issue attachments to Amazon S3
+- Automatically process uploaded attachments using AWS Lambda
 - Automatically generate:
     - Issue category
     - Priority
@@ -14,26 +16,40 @@ An AI-powered backend system that automatically analyzes software issues, determ
     - AI-generated summary
 - Ask natural-language questions about stored issues
 - REST API for interacting with the system
-- Global exception handling for missing issues
+- Exception handling for missing issues
 
 ## Architecture
 
 ```text
-                    Client / Postman
-                           |
-                           v
-                  Spring Boot REST API
-                           |
-             +-------------+-------------+
-             |             |             |
-             v             v             v
-        IssueService    AiService    Exception Handler
-             |             |
-             v             v
-         DynamoDB       OpenAI API
-             |
-             v
+                         Client / Postman
+                                |
+                                v
+                       Spring Boot REST API
+                                |
+              +-----------------+-----------------+
+              |                 |                 |
+              v                 v                 v
+         IssueService       AiService      Exception Handler
+              |                 |
+              v                 v
+          DynamoDB          OpenAI API
+              |
+              v
         Stored Issues
+
+              Issue Attachments
+                     |
+                     v
+                    S3
+                     |
+                     v
+                  Lambda
+                     |
+                     v
+                OpenAI API
+                     |
+                     v
+              Update DynamoDB
 ```
 
 ## How AI Analysis Works
@@ -62,6 +78,28 @@ Structured AI Analysis
   |
   v
 DynamoDB
+
+Issue Attachment
+      |
+      v
+     S3
+      |
+      v
+   Lambda
+      |
+      v
+  OpenAI API
+      |
+      v
+AI Analysis
+      |
+      +--> Category
+      +--> Priority
+      +--> Recommended Team
+      +--> Summary
+      |
+      v
+   DynamoDB
 ```
 
 ## Natural-Language Queries
@@ -94,7 +132,7 @@ Natural-Language Response
 
 | Technology | Purpose |
 |---|---|
-| Java 21 | Backend programming language |
+| Java | Backend programming language |
 | Spring Boot | REST API and application framework |
 | Amazon DynamoDB | Issue data storage |
 | OpenAI API | AI analysis and natural-language queries |
@@ -186,58 +224,3 @@ For an issue describing a login failure caused by database connection errors, th
   "summary": "Users are unable to log in because of database connection failures in the authentication service."
 }
 ```
-
-## Project Structure
-
-```text
-src/main/java/com/example/intelligent_issue_router/
-│
-├── controller/
-│   └── IssueController.java
-│
-├── service/
-│   ├── IssueService.java
-│   └── AiService.java
-│
-├── model/
-│   └── Issue.java
-│
-├── dto/
-│   ├── AiAnalysis.java
-│   ├── AIQueryRequest.java
-│   └── ResolveIssueRequest.java
-│
-├── config/
-│   └── OpenAIConfig.java
-│
-└── exception/
-    ├── IssueNotFoundException.java
-    └── GlobalExceptionHandler.java
-```
-
-## Future Improvements
-
-Potential extensions include:
-
-- Semantic search and RAG
-- Vector database integration
-- S3 storage for issue attachments and logs
-- AWS Lambda for asynchronous processing
-- Authentication and authorization
-- Web-based dashboard
-- Issue analytics
-- Automated team routing
-- Deployment to AWS
-
-## Learning Goals
-
-This project was built to explore:
-
-- REST API development with Spring Boot
-- AWS DynamoDB integration
-- Integrating LLM APIs into backend applications
-- Structured AI responses
-- Natural-language interfaces
-- Backend architecture
-- Cloud-based application development
-- Error handling and API design
