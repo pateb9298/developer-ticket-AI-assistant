@@ -54,7 +54,7 @@ An AI backend system that automatically analyzes software issues, determines the
 
 ## How AI Analysis Works
 
-When an issue is submitted, the backend can send the issue title and description to OpenAI.
+When an issue is submitted for analysis, the backend can send the issue title and description to OpenAI.
 
 ```text
 Issue
@@ -135,6 +135,8 @@ Natural-Language Response
 | Java | Backend programming language |
 | Spring Boot | REST API and application framework |
 | Amazon DynamoDB | Issue data storage |
+| Amazon S3 | Issue attachment storage |
+| AWS Lambda | Automated attachment processing |
 | OpenAI API | AI analysis and natural-language queries |
 | Maven | Dependency management and build |
 | Postman | API testing |
@@ -211,6 +213,12 @@ Example:
 ```http
 DELETE /issues/{id}
 ```
+
+### Upload Issue Attachment
+
+`POST /issues/{id}/attachments`
+
+Uploads an attachment to Amazon S3 for automated processing.
 
 ## Example AI Analysis
 
