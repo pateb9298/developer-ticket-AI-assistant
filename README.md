@@ -1,4 +1,4 @@
-# Intelligent Issue Router
+# Developer Ticket AI Assistant  
 
 An AI backend system that automatically analyzes software issues, determines their priority and category, recommends the appropriate engineering team, and allows users to query their issue data using natural language.
 
